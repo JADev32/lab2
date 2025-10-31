@@ -4,18 +4,20 @@
 RUN apt-get update && apt-get install -y git unzip
 RUN docker-php-ext-install mysqli pdo pdo_mysql
 
-# Instalar Composer DESDE AWS ECR PUBLIC (evita rate limiting)
+# Instalar Composer desde AWS ECR Public
 COPY --from=public.ecr.aws/docker/library/composer:latest /usr/bin/composer /usr/bin/composer
 
 # Crear estructura de directorios
 RUN mkdir -p /var/www/html/config
 
-# Copiar archivos específicamente
+# Copiar archivos específicamente (manejar archivos que pueden no existir)
 COPY config/ /var/www/html/config/
 COPY dic/ /var/www/html/dic/
 COPY web/ /var/www/html/web/
+
+# Copiar composer.json (requerido) y composer.lock si existe
 COPY composer.json /var/www/html/
-COPY composer.lock /var/www/html/
+COPY composer.lock /var/www/html/ 2>/dev/null || echo "composer.lock no encontrado, continuando..."
 
 WORKDIR /var/www/html
 
