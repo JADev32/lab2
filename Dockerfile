@@ -15,25 +15,22 @@ WORKDIR /var/www/html
 # Instalar dependencias PHP
 RUN if [ -f "composer.json" ]; then composer install --no-dev --optimize-autoloader; fi
 
-# Configuración de Apache MEJORADA
+# Configuración de Apache - SERVIR DESDE /web
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 RUN a2enmod rewrite
+RUN sed -i 's|/var/www/html|/var/www/html/web|g' /etc/apache2/sites-available/000-default.conf
 
-# Configurar DocumentRoot si es necesario (si tu app está en subdirectorio 'web')
-RUN if [ -d "/var/www/html/web" ]; then \
-        sed -i 's|/var/www/html|/var/www/html/web|g' /etc/apache2/sites-available/000-default.conf; \
-    fi
-
-# Permisos MEJORADOS
+# Permisos
 RUN chown -R www-data:www-data /var/www/html
 RUN chmod -R 755 /var/www/html
 RUN find /var/www/html -type f -exec chmod 644 {} \;
 
-# Health check file
-RUN echo '<?php http_response_code(200); echo "OK"; ?>' > /var/www/html/health.php
+# Health check file - EN EL DIRECTORIO WEB/
+RUN echo '<?php http_response_code(200); echo "OK"; ?>' > /var/www/html/web/health.php
 
-# Verificar estructura de archivos
-RUN echo "=== Estructura de archivos ===" && ls -la /var/www/html/
+# Verificación
+RUN echo "=== Health file en web/ ==="
+RUN ls -la /var/www/html/web/health.php
 
 EXPOSE 80
 
