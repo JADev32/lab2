@@ -15,12 +15,10 @@ env:
 phases:
   pre_build:
     commands:
-    - echo "Iniciando fase pre_build..."
-    - aws --version
-    - echo "Login en Amazon ECR..."
-    - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin 131676642371.dkr.ecr.us-east-1.amazonaws.com
-    - echo "Login en DockerHub..."
-    - echo $DOCKERHUB_PASSWORD | docker logain -u $DOCKERHUB_USERNAME --password-stdin
+      - echo "Iniciando fase pre_build..."
+      - aws --version
+      - echo "Login en Amazon ECR..."
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin 131676642371.dkr.ecr.us-east-1.amazonaws.com
 
   build:
     commands:
