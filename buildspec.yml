@@ -6,11 +6,11 @@ env:
     IMAGE_REPO_NAME: lab2-repo
     IMAGE_TAG: latest
     CONTAINER_NAME: php-frontend
-  parameter-store:
-    DB_HOST: /php-sample/DB_HOST
-    DB_USER: /php-sample/DB_USER
-    DB_PASS: /php-sample/DB_PASS
-    DB_NAME: /php-sample/DB_NAME
+    parameter-store:
+    DB_HOST: "/myapp/db/host"
+    DB_NAME: "/myapp/db/name"
+    DB_PASS: "/myapp/db/password"
+    DB_USER: "/myapp/db/user"
 
 phases:
   pre_build:
