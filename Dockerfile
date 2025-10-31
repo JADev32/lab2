@@ -1,5 +1,5 @@
 ﻿FROM public.ecr.aws/docker/library/php:8.0-apache
-#Prueba final?
+
 # Instalar dependencias
 RUN apt-get update && apt-get install -y git unzip curl
 RUN docker-php-ext-install mysqli pdo pdo_mysql
@@ -15,24 +15,25 @@ WORKDIR /var/www/html
 # Instalar dependencias PHP
 RUN if [ -f "composer.json" ]; then composer install --no-dev --optimize-autoloader; fi
 
-# Configuración BÁSICA de Apache
+# Configuración de Apache MEJORADA
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 RUN a2enmod rewrite
 
-# Asegurar permisos
+# Configurar DocumentRoot si es necesario (si tu app está en subdirectorio 'web')
+RUN if [ -d "/var/www/html/web" ]; then \
+        sed -i 's|/var/www/html|/var/www/html/web|g' /etc/apache2/sites-available/000-default.conf; \
+    fi
+
+# Permisos MEJORADOS
 RUN chown -R www-data:www-data /var/www/html
 RUN chmod -R 755 /var/www/html
+RUN find /var/www/html -type f -exec chmod 644 {} \;
 
-# Health check file - VERSIÓN MEJORADA
-RUN echo '<?php' > /var/www/html/health.php
-RUN echo 'header("Content-Type: text/plain");' >> /var/www/html/health.php
-RUN echo 'http_response_code(200);' >> /var/www/html/health.php
-RUN echo 'echo "OK";' >> /var/www/html/health.php
-RUN echo '?>' >> /var/www/html/health.php
+# Health check file
+RUN echo '<?php http_response_code(200); echo "OK"; ?>' > /var/www/html/health.php
 
-# Verificar que el archivo se creó
-RUN ls -la /var/www/html/health.php
-RUN cat /var/www/html/health.php
+# Verificar estructura de archivos
+RUN echo "=== Estructura de archivos ===" && ls -la /var/www/html/
 
 EXPOSE 80
 
