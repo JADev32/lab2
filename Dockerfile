@@ -1,29 +1,25 @@
-﻿FROM php:8.0-apache
+﻿# 1️⃣ Base PHP + Apache ya disponible en Amazon Linux
+FROM public.ecr.aws/amazonlinux/amazonlinux:2 as base
 
-# Instalar dependencias del sistema y Composer
-RUN apt-get update && apt-get install -y git unzip
-RUN docker-php-ext-install mysqli pdo pdo_mysql
+# Instalar PHP 8.0 y Apache
+RUN amazon-linux-extras enable php8.0 \
+    && yum install -y php php-cli php-mbstring httpd tar unzip \
+    && yum clean all
 
-# Instalar Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Copiar archivos de la aplicación
-COPY . /var/www/html/
-
+# Crear directorio de la aplicación
 WORKDIR /var/www/html
 
-# Instalar dependencias de Composer
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+# 2️⃣ Instalar Composer manualmente sin usar Docker Hub
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Configuración corregida de Apache
-RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
-RUN mkdir -p /var/www/html/config
-RUN echo "# Configuración adicional" > /var/www/html/config/vhost.conf
-RUN mkdir -p /var/log/apache2/example-app
-COPY apache/default-site.conf /etc/apache2/sites-available/000-default.conf
-RUN sed -i 's/ServerName example-app.com/ServerName localhost/' /etc/apache2/sites-available/000-default.conf
-RUN a2enmod rewrite
-RUN chown -R www-data:www-data /var/www/html
-RUN chmod -R 755 /var/www/html
+# 3️⃣ Copiar archivos de la aplicación
+COPY . /var/www/html
 
+# 4️⃣ Ajustar permisos
+RUN chown -R apache:apache /var/www/html
+
+# 5️⃣ Exponer puerto 80
 EXPOSE 80
+
+# 6️⃣ Comando de inicio
+CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
