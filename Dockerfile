@@ -1,5 +1,5 @@
 ﻿FROM public.ecr.aws/docker/library/php:8.0-apache
-
+#Prueba final?
 # Instalar dependencias
 RUN apt-get update && apt-get install -y git unzip curl
 RUN docker-php-ext-install mysqli pdo pdo_mysql
