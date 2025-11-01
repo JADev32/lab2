@@ -7,19 +7,25 @@ RUN docker-php-ext-install mysqli pdo pdo_mysql
 # Instalar Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Copiar aplicación
+# Copiar TODA la aplicación
 COPY . /var/www/html/
 
 WORKDIR /var/www/html
 
+# VERIFICACIÓN SEGURA (solo si existe config/)
+RUN if [ -d "/var/www/html/config" ]; then \
+    echo "=== Directorio config existe ==="; \
+    ls -la /var/www/html/config/; \
+else \
+    echo "=== ADVERTENCIA: Directorio config NO existe ==="; \
+fi
+
 # Instalar dependencias PHP
 RUN if [ -f "composer.json" ]; then composer install --no-dev --optimize-autoloader; fi
 
-# Configuración BÁSICA de Apache - SIN ARCHIVOS EXTERNOS PROBLEMÁTICOS
+# Configuración de Apache
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 RUN a2enmod rewrite
-
-# Configurar DocumentRoot para /web (SIN usar archivos externos)
 RUN sed -i 's|/var/www/html|/var/www/html/web|g' /etc/apache2/sites-available/000-default.conf
 
 # Permisos
@@ -27,7 +33,7 @@ RUN chown -R www-data:www-data /var/www/html
 RUN chmod -R 755 /var/www/html
 RUN find /var/www/html -type f -exec chmod 644 {} \;
 
-# Health check file en web/
+# Health check
 RUN echo '<?php http_response_code(200); echo "OK"; ?>' > /var/www/html/web/health.php
 
 EXPOSE 80
