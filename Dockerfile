@@ -7,15 +7,31 @@ RUN docker-php-ext-install mysqli pdo pdo_mysql
 # Instalar Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Copiar TODA la aplicación
-COPY . /var/www/html/
+# Copiar aplicación (sin config/)
+COPY dic/ /var/www/html/dic/
+COPY web/ /var/www/html/web/
+COPY src/ /var/www/html/src/
+COPY composer.json /var/www/html/
+COPY autoloader.php /var/www/html/
+COPY bootstrap.php /var/www/html/
+COPY error_handler.php /var/www/html/
 
 WORKDIR /var/www/html
 
-# Verificación MÍNIMA y segura
-RUN echo "Verificando archivos críticos..." && \
-    find /var/www/html -name "db-connection.php" | head -1 && \
-    echo "Continuando..."
+# CREAR db-connection.php DIRECTAMENTE en el contenedor
+RUN mkdir -p /var/www/html/config
+RUN echo '<?php' > /var/www/html/config/db-connection.php
+RUN echo '$host = getenv('\''DATABASE_HOST'\'') ?: '\''db'\'';' >> /var/www/html/config/db-connection.php
+RUN echo '$username = getenv('\''DATABASE_USER'\'') ?: '\''root'\'';' >> /var/www/html/config/db-connection.php
+RUN echo '$password = getenv('\''DATABASE_PASSWORD'\'') ?: '\''password'\'';' >> /var/www/html/config/db-connection.php
+RUN echo '$database = getenv('\''DATABASE_NAME'\'') ?: '\''app_db'\'';' >> /var/www/html/config/db-connection.php
+RUN echo '$conn = new PDO('\''mysql:host='\'' . \$host . '\'';dbname='\'' . \$database, \$username, \$password);' >> /var/www/html/config/db-connection.php
+RUN echo '$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);' >> /var/www/html/config/db-connection.php
+RUN echo 'return $conn;' >> /var/www/html/config/db-connection.php
+RUN echo '?>' >> /var/www/html/config/db-connection.php
+
+# Verificar que se creó
+RUN cat /var/www/html/config/db-connection.php
 
 # Instalar dependencias PHP
 RUN if [ -f "composer.json" ]; then composer install --no-dev --optimize-autoloader; fi
