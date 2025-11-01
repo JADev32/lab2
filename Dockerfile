@@ -13,12 +13,19 @@ COPY dic/ /var/www/html/dic/
 COPY web/ /var/www/html/web/
 COPY src/ /var/www/html/src/
 COPY composer.json /var/www/html/
-COPY composer.lock /var/www/html/ 2>/dev/null || echo "composer.lock no existe"
 COPY autoloader.php /var/www/html/
 COPY bootstrap.php /var/www/html/
 COPY error_handler.php /var/www/html/
 
 WORKDIR /var/www/html
+
+# Copiar composer.lock si existe (manejo seguro)
+RUN if [ -f "composer.lock" ]; then \
+    echo "composer.lock existe, copiando..."; \
+    cp composer.lock /var/www/html/; \
+else \
+    echo "composer.lock no existe, continuando..."; \
+fi
 
 # Instalar dependencias PHP
 RUN if [ -f "composer.json" ]; then composer install --no-dev --optimize-autoloader; fi
