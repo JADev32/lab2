@@ -12,13 +12,11 @@ COPY . /var/www/html/
 
 WORKDIR /var/www/html
 
-# VERIFICACIÓN SEGURA (solo si existe config/)
-RUN if [ -d "/var/www/html/config" ]; then \
-    echo "=== Directorio config existe ==="; \
-    ls -la /var/www/html/config/; \
-else \
-    echo "=== ADVERTENCIA: Directorio config NO existe ==="; \
-fi
+# DIAGNÓSTICO CRÍTICO - SOLO LISTAR ARCHIVOS IMPORTANTES
+RUN echo "=== ARCHIVOS CRÍTICOS ===" && \
+    find /var/www/html -name "db-connection.php" && \
+    find /var/www/html -name "users.php" && \
+    find /var/www/html -name "tweets.php"
 
 # Instalar dependencias PHP
 RUN if [ -f "composer.json" ]; then composer install --no-dev --optimize-autoloader; fi
@@ -31,7 +29,6 @@ RUN sed -i 's|/var/www/html|/var/www/html/web|g' /etc/apache2/sites-available/00
 # Permisos
 RUN chown -R www-data:www-data /var/www/html
 RUN chmod -R 755 /var/www/html
-RUN find /var/www/html -type f -exec chmod 644 {} \;
 
 # Health check
 RUN echo '<?php http_response_code(200); echo "OK"; ?>' > /var/www/html/web/health.php
