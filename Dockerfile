@@ -18,19 +18,18 @@ COPY error_handler.php /var/www/html/
 
 WORKDIR /var/www/html
 
-# CREAR db-connection.php CORREGIDO (sin errores de escape)
+# CREAR db-connection.php usando printf (más confiable)
 RUN mkdir -p /var/www/html/config
-RUN cat > /var/www/html/config/db-connection.php << 'EOF'
-<?php
-$host = getenv('DATABASE_HOST') ?: 'db';
-$username = getenv('DATABASE_USER') ?: 'root';
-$password = getenv('DATABASE_PASSWORD') ?: 'password';
-$database = getenv('DATABASE_NAME') ?: 'app_db';
-$conn = new PDO('mysql:host=' . $host . ';dbname=' . $database, $username, $password);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-return $conn;
-?>
-EOF
+RUN printf '%s\n' \
+    '<?php' \
+    '$host = getenv('\''DATABASE_HOST'\'') ?: '\''db'\'';' \
+    '$username = getenv('\''DATABASE_USER'\'') ?: '\''root'\'';' \
+    '$password = getenv('\''DATABASE_PASSWORD'\'') ?: '\''password'\'';' \
+    '$database = getenv('\''DATABASE_NAME'\'') ?: '\''app_db'\'';' \
+    '$conn = new PDO('\''mysql:host='\'' . $host . '\'';dbname='\'' . $database, $username, $password);' \
+    '$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);' \
+    'return $conn;' \
+    '?>' > /var/www/html/config/db-connection.php
 
 # Verificar que se creó
 RUN cat /var/www/html/config/db-connection.php
