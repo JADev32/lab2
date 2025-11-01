@@ -15,9 +15,11 @@ WORKDIR /var/www/html
 # Instalar dependencias PHP
 RUN if [ -f "composer.json" ]; then composer install --no-dev --optimize-autoloader; fi
 
-# Configuración de Apache - SERVIR DESDE /web
+# Configuración BÁSICA de Apache - SIN ARCHIVOS EXTERNOS PROBLEMÁTICOS
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 RUN a2enmod rewrite
+
+# Configurar DocumentRoot para /web (SIN usar archivos externos)
 RUN sed -i 's|/var/www/html|/var/www/html/web|g' /etc/apache2/sites-available/000-default.conf
 
 # Permisos
@@ -25,12 +27,8 @@ RUN chown -R www-data:www-data /var/www/html
 RUN chmod -R 755 /var/www/html
 RUN find /var/www/html -type f -exec chmod 644 {} \;
 
-# Health check file - EN EL DIRECTORIO WEB/
+# Health check file en web/
 RUN echo '<?php http_response_code(200); echo "OK"; ?>' > /var/www/html/web/health.php
-
-# Verificación
-RUN echo "=== Health file en web/ ==="
-RUN ls -la /var/www/html/web/health.php
 
 EXPOSE 80
 
