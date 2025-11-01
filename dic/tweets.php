@@ -1,5 +1,5 @@
 <?php
 
 return new Service\TweetsService(
-    require "config/db-connection.php"
+    require __DIR__ . "/../config/db-connection.php"
 );
