@@ -18,7 +18,7 @@ COPY error_handler.php /var/www/html/
 
 WORKDIR /var/www/html
 
-# CREAR db-connection.php usando printf (más confiable)
+# CREAR db-connection.php usando printf (más confiable) 
 RUN mkdir -p /var/www/html/config
 RUN printf '%s\n' \
     '<?php' \
