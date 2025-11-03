@@ -1,26 +1,181 @@
-.navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover{
-    background-color: #337AB7;
+/* ===== MEJORAS PARA LA LISTA DE USUARIOS ===== */
+
+/* Panel principal mejorado */
+.panel-info {
+    border: 1px solid #e1e8ed;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    background: white;
 }
 
-body{
-    background-color: #F0FFFF;
-}
-.navbar-default .navbar-collapse, .navbar-default{
-    background-color: white;
+.panel-body {
+    padding: 30px;
 }
 
-a{
-    color:#60A6C1;
+.panel-body h1 {
+    color: #14171a;
+    font-size: 24px;
+    font-weight: 700;
+    border-bottom: 3px solid #1da1f2;
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+    text-align: center;
 }
 
-.panel-info{
-    border:1px lightgrey solid;
+/* Tarjetas de usuario estilo Twitter */
+.media {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    margin: 12px 0;
+    border-radius: 12px;
+    border: 1px solid #e6ecf0;
+    background: #fff;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.fullname{
-    color: black;
+.media:hover {
+    background: #f7f9fa;
+    border-color: #ccd6dd;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(29, 161, 242, 0.15);
 }
 
-.modal-dialog{
-    z-index: 1050;
+/* Avatar de usuario */
+.media-left {
+    margin-right: 15px;
+}
+
+.img-rounded {
+    border-radius: 50%;
+    width: 65px;
+    height: 65px;
+    border: 3px solid #1da1f2;
+    transition: all 0.3s ease;
+}
+
+.media:hover .img-rounded {
+    border-color: #1a91da;
+    transform: scale(1.08);
+}
+
+/* Información del usuario */
+.media-body {
+    flex: 1;
+}
+
+.media-body p {
+    margin: 0 0 5px 0;
+    line-height: 1.4;
+}
+
+.fullname {
+    color: #14171a;
+    font-size: 16px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.media-body a:hover .fullname {
+    color: #1da1f2;
+    text-decoration: underline;
+}
+
+.username {
+    color: #657786;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.media-body a:hover .username {
+    color: #1da1f2;
+}
+
+/* Fecha de ingreso */
+.join-date {
+    color: #657786;
+    font-size: 13px;
+}
+
+.time {
+    color: #1da1f2;
+    font-weight: 600;
+}
+
+/* Efectos de enlace */
+.media-body a {
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+/* Navbar mejorado */
+.navbar-default {
+    background: #fff !important;
+    border-bottom: 1px solid #e6ecf0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.navbar-default .navbar-nav>.active>a, 
+.navbar-default .navbar-nav>.active>a:focus, 
+.navbar-default .navbar-nav>.active>a:hover {
+    background-color: #1da1f2 !important;
+    color: white !important;
+    border-radius: 20px;
+    margin: 8px 5px;
+}
+
+.navbar-nav li a {
+    color: #66757f !important;
+    font-weight: 500;
+    border-radius: 20px;
+    margin: 8px 5px;
+    transition: all 0.2s ease;
+}
+
+.navbar-nav li a:hover {
+    background-color: #e8f5fe !important;
+    color: #1da1f2 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .panel-body {
+        padding: 20px 15px;
+    }
+    
+    .media {
+        flex-direction: column;
+        text-align: center;
+        padding: 15px;
+    }
+    
+    .media-left {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    
+    .img-rounded {
+        width: 55px;
+        height: 55px;
+    }
+    
+    .media-body p {
+        text-align: center;
+    }
+}
+
+/* Mejora del fondo general */
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+
+.container {
+    padding-top: 20px;
+    padding-bottom: 40px;
+}
+
+.row {
+    display: flex;
+    justify-content: center;
 }
