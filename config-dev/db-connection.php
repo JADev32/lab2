@@ -35,3 +35,6 @@ try {
     header($_SERVER["SERVER_PROTOCOL"] . " 500 Internal Server Error", true, 500);
     exit("Database connection error");
 }
+
+
+#mysql-service.ecs-internal (variable de entorno parameter store)
