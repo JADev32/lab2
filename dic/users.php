@@ -1,4 +1,6 @@
 <?php
+require __DIR__ . "/../config/db-connection.php";
+
 return new Service\UsersService(
-    require "config/db-connection.php"
+    require __DIR__ . "/../config/db-connection.php"
 );
